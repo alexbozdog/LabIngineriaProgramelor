@@ -6,6 +6,7 @@ import java.util.List;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
+import java.util.ArrayList;
 
 import java.io.IOException;
 
@@ -24,9 +25,23 @@ public class Cars extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/pages/cars.jsp")
                 .forward(request, response);
     }
-
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws
-            ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String[] carIdsAsString = request.getParameterValues("car_ids");
+
+        if (carIdsAsString != null) {
+            List<Long> carIds = new ArrayList<>();
+
+            for (String carIdAsString : carIdsAsString) {
+                carIds.add(Long.parseLong(carIdAsString));
+            }
+
+            carsBean.deleteCarsByIds(carIds);
+        }
+
+        response.sendRedirect(request.getContextPath() + "/Cars");
     }
+
 }
